@@ -132,6 +132,12 @@ function switchToConfig() {
   window.electronAPI.stopOverlay();
 }
 
+function switchToPreviewFromOverlay() {
+  currentMode = "preview";
+  previewView.classList.remove("overlay-active");
+  document.getElementById("preview-bar").classList.remove("hidden");
+}
+
 // --- Event Listeners ---
 
 urlInput.addEventListener("keydown", (e) => {
@@ -149,6 +155,8 @@ opacitySlider.addEventListener("input", () => {
 window.electronAPI.onModeChanged((mode) => {
   if (mode === "config" && currentMode !== "config") {
     switchToConfig();
+  } else if (mode === "preview" && currentMode === "overlay") {
+    switchToPreviewFromOverlay();
   }
 });
 
@@ -175,16 +183,16 @@ window.electronAPI.onSeekVideo((delta) => {
 
 // --- Global keyboard shortcuts ---
 
-// Cmd+O — handled via before-input-event in main so it works even when iframe has focus
+// Opt+Cmd+O — handled via before-input-event in main so it works even when iframe has focus
 window.electronAPI.onTriggerOverlay(() => {
   if (currentMode === "preview") switchToOverlay();
 });
 
 document.addEventListener("keydown", (e) => {
-  // Cmd+Shift+O or Escape to exit overlay/preview back to config
-  if ((e.metaKey && e.shiftKey && e.key === "O") || e.key === "Escape") {
+  // Opt+Esc to exit preview back to config (overlay mode uses global shortcuts in main)
+  if (e.altKey && e.key === "Escape") {
     e.preventDefault();
-    if (currentMode === "overlay" || currentMode === "preview") {
+    if (currentMode === "preview") {
       switchToConfig();
     }
   }

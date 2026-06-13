@@ -72,7 +72,7 @@ function createWindow() {
   win.loadURL(`http://127.0.0.1:${port}/`);
 
   win.webContents.on('before-input-event', (event, input) => {
-    if (input.type === 'keyDown' && input.meta && !input.shift && input.key === 'o') {
+    if (input.type === 'keyDown' && input.meta && input.alt && input.code === 'KeyO') {
       event.preventDefault();
       win.webContents.send('trigger-overlay');
     }
@@ -100,12 +100,39 @@ function enterOverlay(opacity) {
 
   win.setWindowButtonVisibility(false);
 
-  globalShortcut.register('CommandOrControl+Shift+O', () => exitOverlay());
-  globalShortcut.register('Escape', () => { if (isOverlay) exitOverlay(); });
+  globalShortcut.register('Alt+CommandOrControl+O', () => exitOverlayToPreview());
+  globalShortcut.register('Alt+Escape', () => { if (isOverlay) exitOverlay(); });
   globalShortcut.register('Alt+Left', () => { if (win) win.webContents.send('seek-video', -5); });
   globalShortcut.register('Alt+Right', () => { if (win) win.webContents.send('seek-video', 5); });
 
   win.webContents.send('mode-changed', 'overlay');
+}
+
+function unregisterOverlayShortcuts() {
+  globalShortcut.unregister('Alt+CommandOrControl+O');
+  globalShortcut.unregister('Alt+Escape');
+  globalShortcut.unregister('Alt+Left');
+  globalShortcut.unregister('Alt+Right');
+}
+
+function exitOverlayToPreview() {
+  if (!win) return;
+  isOverlay = false;
+
+  win.setWindowButtonVisibility(true);
+  unregisterOverlayShortcuts();
+
+  win.setIgnoreMouseEvents(false);
+  win.setAlwaysOnTop(false);
+  win.setVisibleOnAllWorkspaces(false);
+  win.setOpacity(1);
+  win.setHasShadow(true);
+
+  const { width, height } = screen.getPrimaryDisplay().workAreaSize;
+  win.setSize(800, 500);
+  win.setPosition(Math.round((width - 800) / 2), Math.round((height - 500) / 2));
+
+  win.webContents.send('mode-changed', 'preview');
 }
 
 function exitOverlay() {
@@ -113,11 +140,7 @@ function exitOverlay() {
   isOverlay = false;
 
   win.setWindowButtonVisibility(true);
-
-  globalShortcut.unregister('CommandOrControl+Shift+O');
-  globalShortcut.unregister('Escape');
-  globalShortcut.unregister('Alt+Left');
-  globalShortcut.unregister('Alt+Right');
+  unregisterOverlayShortcuts();
 
   win.setIgnoreMouseEvents(false);
   win.setAlwaysOnTop(false);
