@@ -1,0 +1,15 @@
+{
+  "name": "ovl",
+  "version": "1.0.0",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "keywords": ["overlay", "youtube", "macos"],
+  "author": "",
+  "license": "ISC",
+  "description": "A transparent YouTube overlay for macOS",
+  "devDependencies": {
+    "electron": "^41.7.1"
+  }
+}

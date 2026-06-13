@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ovl</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="config-view">
+    <h1>ovl</h1>
+    <p class="subtitle">YouTube overlay for your desktop</p>
+
+    <div class="field">
+      <label for="url-input">YouTube Embed Code or URL</label>
+      <textarea
+        id="url-input"
+        placeholder="Paste YouTube embed code or URL..."
+        spellcheck="false"
+        autofocus
+        rows="3"
+      ></textarea>
+    </div>
+
+    <div class="field">
+      <label for="opacity-slider">Opacity: <span id="opacity-value">30%</span></label>
+      <input
+        type="range"
+        id="opacity-slider"
+        min="5"
+        max="100"
+        step="5"
+        value="30"
+      />
+    </div>
+
+    <p class="hint">Press <kbd>Enter</kbd> to preview &middot; <kbd>⌘O</kbd> for overlay &middot; <kbd>⌘⇧O</kbd> to exit</p>
+  </div>
+
+  <div id="preview-view" class="hidden">
+    <div id="preview-player"></div>
+    <div id="preview-bar">
+      <span>Preview</span>
+      <span class="preview-hint">Press <kbd>⌘O</kbd> to enter overlay &middot; <kbd>Esc</kbd> to close &middot; <kbd>⌥←</kbd><kbd>⌥→</kbd> to seek</span>
+    </div>
+  </div>
+
+  <div id="overlay-view" class="hidden">
+    <div id="player-container"></div>
+  </div>
+
+  <script src="renderer.js"></script>
+</body>
+</html>
