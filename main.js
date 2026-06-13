@@ -76,6 +76,10 @@ function createWindow() {
       event.preventDefault();
       win.webContents.send('trigger-overlay');
     }
+    if (input.type === 'keyDown' && input.alt && !input.meta && input.code === 'Escape') {
+      event.preventDefault();
+      win.webContents.send('trigger-exit');
+    }
   });
 }
 
@@ -178,6 +182,10 @@ ipcMain.on('set-ignore-mouse', (_event, ignore) => {
   } else {
     win.setIgnoreMouseEvents(false);
   }
+});
+
+ipcMain.on('set-content-protection', (_event, enabled) => {
+  if (win) win.setContentProtection(enabled);
 });
 
 ipcMain.on('quit-app', () => {

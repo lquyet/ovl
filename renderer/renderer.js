@@ -9,6 +9,7 @@ const urlInput = document.getElementById("url-input");
 const opacitySlider = document.getElementById("opacity-slider");
 const opacityValue = document.getElementById("opacity-value");
 const playerContainer = document.getElementById("player-container");
+const contentProtectionToggle = document.getElementById("content-protection-toggle");
 
 function extractIframeSrc(input) {
   const match = input.match(/src=["']([^"']+)["']/);
@@ -151,6 +152,10 @@ opacitySlider.addEventListener("input", () => {
   opacityValue.textContent = opacitySlider.value + "%";
 });
 
+contentProtectionToggle.addEventListener("change", () => {
+  window.electronAPI.setContentProtection(contentProtectionToggle.checked);
+});
+
 // Mode change from main process
 window.electronAPI.onModeChanged((mode) => {
   if (mode === "config" && currentMode !== "config") {
@@ -183,17 +188,11 @@ window.electronAPI.onSeekVideo((delta) => {
 
 // --- Global keyboard shortcuts ---
 
-// Opt+Cmd+O — handled via before-input-event in main so it works even when iframe has focus
+// Opt+Cmd+O and Opt+Esc — handled via before-input-event in main so they work even when iframe has focus
 window.electronAPI.onTriggerOverlay(() => {
   if (currentMode === "preview") switchToOverlay();
 });
 
-document.addEventListener("keydown", (e) => {
-  // Opt+Esc to exit preview back to config (overlay mode uses global shortcuts in main)
-  if (e.altKey && e.key === "Escape") {
-    e.preventDefault();
-    if (currentMode === "preview") {
-      switchToConfig();
-    }
-  }
+window.electronAPI.onTriggerExit(() => {
+  if (currentMode === "preview") switchToConfig();
 });
